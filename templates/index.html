@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCloud Album Downloader</title>
+    <meta name="description" content="Download photos and videos from iCloud shared albums easily.">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☁️</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="app-logo">
+                <svg viewBox="0 0 24 24" fill="white">
+                    <path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+                </svg>
+            </div>
+            <h1>iCloud Album Downloader</h1>
+            <p>Download all photos &amp; videos from shared albums</p>
+        </header>
+
+        <!-- Error Banner -->
+        <div id="errorBanner" class="error-banner"></div>
+
+        <!-- URL Input -->
+        <section class="glass-card" id="inputSection">
+            <div class="card-title">Album URL</div>
+            <div class="input-group">
+                <input
+                    type="url"
+                    id="urlInput"
+                    class="url-input"
+                    placeholder="https://www.icloud.com/sharedalbum/#..."
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+                <button id="fetchBtn" class="btn btn-primary">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    Fetch
+                </button>
+            </div>
+        </section>
+
+        <!-- Album Info -->
+        <section id="albumSection" class="glass-card album-info">
+            <div class="album-header">
+                <div class="album-icon">
+                    <svg viewBox="0 0 24 24" fill="white">
+                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div id="albumName" class="album-name">—</div>
+                    <div id="albumOwner" class="album-owner">—</div>
+                </div>
+            </div>
+            <div class="album-stats">
+                <div class="stat-item">
+                    <div id="statPhotos" class="stat-value">0</div>
+                    <div class="stat-label">Photos</div>
+                </div>
+                <div class="stat-item">
+                    <div id="statVideos" class="stat-value">0</div>
+                    <div class="stat-label">Videos</div>
+                </div>
+                <div class="stat-item">
+                    <div id="statSize" class="stat-value">0</div>
+                    <div class="stat-label">Est. Size</div>
+                </div>
+            </div>
+
+            <!-- Output Directory -->
+            <div id="outputSection" class="output-section">
+                <div class="output-label">Save to folder:</div>
+                <div class="output-input-row">
+                    <input
+                        type="text"
+                        id="outputDir"
+                        class="url-input"
+                        value="./downloads"
+                        spellcheck="false"
+                    >
+                    <button id="browseBtn" class="btn btn-browse" title="Browse folders">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- ZIP Toggle -->
+                <div class="zip-toggle-row">
+                    <label class="toggle-label" for="zipToggle">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Compress to ZIP after download
+                    </label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="zipToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Download Button -->
+            <button id="downloadBtn" class="btn btn-primary btn-download">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download All
+            </button>
+        </section>
+
+        <!-- Progress -->
+        <section id="progressSection" class="glass-card progress-section">
+            <div class="progress-header">
+                <span id="progressTitle" class="progress-title">Preparing...</span>
+                <span id="progressCounter" class="progress-counter">0 / 0</span>
+            </div>
+            <div class="progress-bar-track">
+                <div id="progressBarFill" class="progress-bar-fill"></div>
+            </div>
+            <div class="progress-details">
+                <span id="progressSize"></span>
+                <span id="progressSpeed"></span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-eta" id="progressEta"></div>
+            <div id="currentFile" class="current-file">Waiting...</div>
+            <button id="cancelBtn" class="btn btn-danger" style="width:100%; margin-top: 0.5rem;">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="m15 9-6 6"></path>
+                    <path d="m9 9 6 6"></path>
+                </svg>
+                Cancel Download
+            </button>
+        </section>
+
+        <!-- ZIP Progress -->
+        <section id="zipSection" class="glass-card zip-section">
+            <div class="progress-header">
+                <span id="zipTitle" class="progress-title">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:-2px;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Compressing to ZIP...
+                </span>
+                <span id="zipCounter" class="progress-counter">0 / 0</span>
+            </div>
+            <div class="progress-bar-track">
+                <div id="zipBarFill" class="progress-bar-fill zip-bar"></div>
+            </div>
+            <div id="zipCurrentFile" class="current-file">Waiting...</div>
+        </section>
+
+        <!-- Log -->
+        <section id="logSection" class="glass-card log-section">
+            <div class="card-title">Activity Log</div>
+            <div id="logContainer" class="log-container"></div>
+        </section>
+
+        <!-- Complete -->
+        <section id="completeSection" class="glass-card complete-section">
+            <div class="complete-banner">
+                <div class="complete-icon">
+                    <svg viewBox="0 0 24 24" fill="var(--success)">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                    </svg>
+                </div>
+                <div class="complete-title">Download Complete!</div>
+                <div class="complete-subtitle">All files have been saved successfully</div>
+                <div class="complete-stats">
+                    <div class="complete-stat">
+                        <div id="completeSuccessVal" class="complete-stat-value success-val">0</div>
+                        <div class="complete-stat-label">Success</div>
+                    </div>
+                    <div class="complete-stat">
+                        <div id="completeSkipVal" class="complete-stat-value skip-val">0</div>
+                        <div class="complete-stat-label">Skipped</div>
+                    </div>
+                    <div class="complete-stat">
+                        <div id="completeFailVal" class="complete-stat-value fail-val">0</div>
+                        <div class="complete-stat-label">Failed</div>
+                    </div>
+                </div>
+                <div id="completePath" class="complete-path"></div>
+
+                <!-- ZIP Download Button (hidden until ZIP is ready) -->
+                <div id="zipDownloadSection" class="zip-download-section">
+                    <button id="downloadZipBtn" class="btn btn-zip-download">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span id="zipBtnText">Download as ZIP</span>
+                    </button>
+                    <div id="zipInfo" class="zip-info"></div>
+                </div>
+            </div>
+            <!-- Retry Failed Button (hidden unless failures) -->
+            <button id="retryFailedBtn" class="btn btn-retry">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Retry Failed (<span id="retryCount">0</span> files)
+            </button>
+            <button id="newDownloadBtn" class="btn btn-primary btn-download">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14"></path>
+                    <path d="M5 12h14"></path>
+                </svg>
+                Download Another Album
+            </button>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            iCloud Shared Album Downloader &middot; Built with Python &amp; Flask
+        </footer>
+
+    </div>
+
+    <!-- Folder Browser Modal -->
+    <div id="folderModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Select Folder</h3>
+                <button id="modalCloseBtn" class="modal-close">&times;</button>
+            </div>
+            <div id="modalBreadcrumb" class="modal-breadcrumb">
+                <!-- Breadcrumb path -->
+            </div>
+            <div id="folderList" class="folder-list">
+                <!-- Folder items rendered dynamically -->
+            </div>
+            <div class="modal-actions">
+                <button id="newFolderBtn" class="btn btn-ghost">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+                    New Folder
+                </button>
+                <button id="selectFolderBtn" class="btn btn-primary">Select This Folder</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
