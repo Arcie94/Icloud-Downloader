@@ -19,8 +19,9 @@ A lightweight, fast, and beautiful Web UI tool to download all photos and videos
 ## Installation
 
 1. Clone this repository:
+
    ```bash
-   git clone https://github.com/teddyayomi94/icloud-album-downloader.git
+   git clone https://github.com/Arcie94/Icloud-Downloader.git
    cd icloud-album-downloader
    ```
 
@@ -38,12 +39,15 @@ Simply double-click the `Start Web UI.bat` file. It will automatically start the
 
 **On Mac/Linux (or manually):**
 Run the Flask app:
+
 ```bash
 python app.py
 ```
+
 Then open `http://localhost:5000` in your web browser.
 
 ### How to get an iCloud Shared Album URL?
+
 1. Open the Photos app on your iPhone/Mac.
 2. Go to the Shared Album.
 3. Turn on "Public Website" in the album settings.
