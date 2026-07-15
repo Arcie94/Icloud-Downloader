@@ -59,6 +59,8 @@ Then open `http://localhost:5000` in your web browser.
 - **Frontend:** HTML5, Vanilla JavaScript, CSS3 (No heavy frameworks used).
 - **Communication:** Standard REST APIs and Server-Sent Events (SSE) for real-time streaming.
 
+**Built with ❤️ by teddyayomi**
+
 ## License
 
 MIT License
